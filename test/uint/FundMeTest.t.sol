@@ -11,6 +11,7 @@ contract FundMeTest is Test {
     address USER = makeAddr ("user");
     uint256 constant SEND_VALUE = 0.1 ether;
     uint256 constant STARTING_BALLANCE = 10 ether;
+    uint256 constant GAS_PRICE = 1 ether;
 
     function setUp () external {
         //FundMe fundMe = new Fundme(0x694AA1769357215DE4FAC081bf1f309aDC325306);
@@ -68,9 +69,11 @@ contract FundMeTest is Test {
         //arrange
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
         uint256 startingFundMeBalance = address(fundMe).balance;
+        
         //Act
         vm.prank(fundMe.getOwner());
         fundMe.withdraw();
+
         //assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingfundMeBalance = address(fundMe).balance;
@@ -91,6 +94,26 @@ contract FundMeTest is Test {
         //ACT
         vm.startPrank(fundMe.getOwner());
         fundMe.withdraw();
+        vm.stopPrank();
+        //ASSERT
+        assert(address(fundMe).balance == 0);
+        assert(startingFundMeBalance + startingOwnerBalance == fundMe.getOwner().balance);
+
+    }
+
+    function testWithdrawFromMultiplesFundersCheaper () public  funded{
+        //ARRANGE
+        uint160 numberOfFunders = 10;
+        uint160 startingFunderIndex = 1;
+        for(uint160 i = startingFunderIndex; i < numberOfFunders; i++){
+            hoax(address(i), SEND_VALUE);
+            fundMe.fund {value: SEND_VALUE} ();
+        }
+        uint256 startingOwnerBalance = fundMe.getOwner().balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
+        //ACT
+        vm.startPrank(fundMe.getOwner());
+        fundMe.cheaperWithdraw();
         vm.stopPrank();
         //ASSERT
         assert(address(fundMe).balance == 0);
