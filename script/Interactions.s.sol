@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Script, console} from "..forge-std/Script.sol";
+import {Script, console} from "/home/duarte/Learning/foundry-fund-me-f23/lib/forge-std/src/Script.sol";
 import {FundMe} from "../src/FundMe.sol";
 import {DevOpsTools} from "/home/duarte/Learning/foundry-fund-me-f23/lib/foundry-devops/src/DevOpsTools.sol";
 
